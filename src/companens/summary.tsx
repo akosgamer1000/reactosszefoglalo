@@ -9,21 +9,30 @@ export default function Summary() {
     // State to determine if a specific status is active
     const [status, setStatus] = useState(true);
 
+    // State for search functionality
+    const [SearchTerm, setSearchTerm] = useState(''); // Holds the search term input 1
+    const [filteredtablet, setFilteredTablet] = useState<Tablet[]>([]); // Holds filtered tablet data based on search 1
+
+
     // State for storing list of tablets and related states
     const [tablet, setTablet] = useState<Tablet[]>([]); // Holds fetched tablet data
     const [error, setError] = useState(null); // State for capturing errors 
     const [loading, setLoading] = useState(true); // Loading state during fetches
 
-    // State for search functionality
-    const [SearchTerm, setSearchTerm] = useState(''); // Holds the search term input
-    const [filteredtablet, setFilteredTablet] = useState<Tablet[]>([]); // Holds filtered tablet data based on search
-
-    // State for sorting tablets
-    const [sortConfig, setSortConfig] = useState<{ key: keyof Tablet; direction: 'asc' | 'desc' } | null>(null); // State for sorting configuration
-
-    // State for pagination
-    const [currentPage, setCurrentPage] = useState(1); // Current page number
-    const [totalPages, setTotalPages] = useState(1); // Total number of pages 
+    // Function to fetch the list of tablets
+    const normalfetch = () => {
+        fetch('http://localhost:3000/tablets')
+            .then((response) => response.json()) // Parse response to JSON
+            .then((data) => {
+                setTablet(data); // Set tablet data in state
+                setFilteredTablet(data); // Initially set filtered tablets to all
+                setLoading(false); // Mark loading as complete
+            })
+            .catch((error) => { // Catch and handle errors
+                setError(error.message);
+                setLoading(false);
+            });
+    };
 
     // Function to handle deletion of a tablet
     const handledelete = async (id: number) => {
@@ -42,22 +51,7 @@ export default function Summary() {
         }
     };
 
-    // Function to fetch the list of tablets
-    const normalfetch = () => {
-        fetch('http://localhost:3000/tablets')
-            .then((response) => response.json()) // Parse response to JSON
-            .then((data) => {
-                setTablet(data); // Set tablet data in state
-                setFilteredTablet(data); // Initially set filtered tablets to all
-                setLoading(false); // Mark loading as complete
-            })
-            .catch((error) => { // Catch and handle errors
-                setError(error.message);
-                setLoading(false);
-            });
-    };
-
-    // Function to handle search input changes
+    // Function to handle search input changes 1
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const term = event.target.value.toLowerCase(); // Get the input value in lowercase
         setSearchTerm(term); // Update search term state
@@ -65,6 +59,11 @@ export default function Summary() {
         const filtered = tablet.filter((tablet) => tablet.name.toLowerCase().includes(term));
         setFilteredTablet(filtered); // Update filtered tablets
     };
+
+
+    // State for sorting tablets
+    const [sortConfig, setSortConfig] = useState<{ key: keyof Tablet; direction: 'asc' | 'desc' } | null>(null); // State for sorting configuration
+
 
     // Function to sort tablets based on a given key and direction
     const sortTablet = (key: keyof Tablet, direction: 'asc' | 'desc') => {
@@ -77,6 +76,11 @@ export default function Summary() {
         setFilteredTablet(sortedPhones); // Update the state with sorted tablets
         setSortConfig({ key, direction }); // Set the sort configuration
     };
+
+
+    // State for pagination
+    const [currentPage, setCurrentPage] = useState(1); // Current page number
+    const [totalPages, setTotalPages] = useState(1); // Total number of pages 
 
     // Function to fetch tablets with pagination functionality
     const fetchTablet = (page: number) => {

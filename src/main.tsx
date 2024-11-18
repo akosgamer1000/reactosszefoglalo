@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import Summary from './companens/summary.tsx';
 import Tabletekmegjelen from './companens/Tabletmegjelen.tsx';
+import Tabletekfelvetel from './companens/tabletfel.tsx';
 
 const router = createBrowserRouter([
   {
@@ -14,11 +15,16 @@ const router = createBrowserRouter([
     element: <Summary></Summary>
   },
   {
-    path:"/tabletek-megjelen/:tabletid",
+    path: "/tabletek-megjelen/:tabletid",
     element: <Tabletekmegjelen></Tabletekmegjelen>
 
-  }
-  
+  },
+  {
+    path: "/hozzad",
+    element: <Tabletekfelvetel></Tabletekfelvetel>
+
+  },
+
 ]);
 
 
